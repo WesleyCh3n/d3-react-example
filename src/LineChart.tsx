@@ -6,12 +6,12 @@ export type Data = {
   y: number;
 };
 
+const margin = {
+  left: 15,
+  bottom: 20
+}
 const width = 600;
 const height = 400;
-const margin = {
-  left: 10,
-  top: 30
-}
 
 export const LinePlot = (props: { data: Data[] }) => {
   const refChart = useRef<SVGSVGElement>(null);
@@ -28,7 +28,7 @@ export const LinePlot = (props: { data: Data[] }) => {
         .range([0, width]);
       const yScale = d3.scaleLinear()
         .domain(d3.extent(props.data, (d) => d.y).map((y) => y ?? 0))
-        .range([height, 0]);
+        .range([height - margin.bottom, 0]);
 
       // create axis line
       const xAxis: d3.Selection<SVGGElement, unknown, null, undefined> = svg
@@ -64,18 +64,18 @@ export const LinePlot = (props: { data: Data[] }) => {
       viewBox={`0 0 ${width} ${height}`}
     >
       <g transform={`translate(${0} ,${0})`}>
-        <g>
+        <g transform={`translate(${margin.left}, 0)`}>
           <path className="stroke-2 stroke-blue-300 fill-transparent" />
         </g>
         <g
           id="xAxis"
           className="text-green-600"
-          transform={`translate(0, ${0})`}
+          transform={`translate(${margin.left}, ${height - margin.bottom})`}
         />
         <g
           id="yAxis"
           className="text-green-600"
-          transform={`translate(${0}, 0)`}
+          transform={`translate(${margin.left}, 0)`}
         />
       </g>
     </svg>
