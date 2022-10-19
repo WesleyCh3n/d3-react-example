@@ -70,6 +70,9 @@ export const LinePlot = (props: { data: Data[]; layout: Layout }) => {
           d1 = props.data[i];
         if (!d0 || !d1) return;
         const closestData = x0 - d0.x > d1.x - x0 ? d1 : d0;
+        svg.select("#tooltip_text").text(
+          `(${closestData.x.toFixed(1)} ${closestData.y.toFixed(1)})`,
+        );
         return [xScale(closestData.x), yScale(closestData.y)];
       },
     );
@@ -104,10 +107,17 @@ export const LinePlot = (props: { data: Data[]; layout: Layout }) => {
         />
         <g id="tooltip">
           <rect
-            className="fill-stone-900 w-20 h-14 rounded-lg"
+            className="fill-stone-900 w-16 h-8 rounded-lg"
             rx="5"
-            y="-28"
+            y="-16"
             x="6"
+          />
+          <text
+            id="tooltip_text"
+            className="fill-white text-sm"
+            children="x: 1"
+            x="12"
+            y="5"
           />
         </g>
         <rect id="tooltip_overlay" />

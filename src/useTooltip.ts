@@ -1,4 +1,5 @@
 import { Selection, BaseType } from "d3-selection";
+import { easeExpInOut } from "d3-ease"
 
 export const useTooltip = (
   tooltip: Selection<SVGElement, unknown, null, undefined>,
@@ -20,6 +21,7 @@ export const useTooltip = (
       if (move) {
         tooltip.transition()
           .style("opacity", 0.5)
+          .ease(easeExpInOut)
           .attr(
             "transform",
             `translate(${move[0]}, ${move[1]})`,
