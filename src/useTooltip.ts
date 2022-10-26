@@ -19,13 +19,13 @@ export const useTooltip = (
     .on("mousemove", (e) => {
       let move = mouseMoveFn(e);
       if (move) {
-        tooltip.transition()
+        tooltip.attr(
+          "transform",
+          `translate(${move[0]}, ${move[1]})`,
+        ).transition()
           .style("opacity", 0.5)
           .ease(easeExpInOut)
-          .attr(
-            "transform",
-            `translate(${move[0]}, ${move[1]})`,
-          );
+          ;
       }
     });
 };
