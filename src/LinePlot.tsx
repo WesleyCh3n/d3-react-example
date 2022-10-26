@@ -8,7 +8,9 @@ export type Data = {
   y: number;
 };
 
-export const LinePlot = (props: { data: Data[]; layout: Layout }) => {
+export const LinePlot = (
+  props: { data: Data[]; setData?: (d: Data[]) => void; layout: Layout },
+) => {
   // const refChart = useRef<SVGSVGElement>(null);
   const ref = useD3((svg) => {
     // function of map dimension of abstract data to a visual representation
@@ -41,21 +43,68 @@ export const LinePlot = (props: { data: Data[]; layout: Layout }) => {
       .attr("y2", d => yScale(d));
 
     // draw actual line plot
-    svg.select("path")
-      .data([props.data])
+    const line = d3.line<Data>()
+      .x((d) => xScale(d.x))
+      .y((d) => yScale(d.y))
+      .curve(d3.curveMonotoneY) // set curve factory
+      .curve(d3.curveMonotoneX);
+    svg.select("#data").select("path").data([props.data])
       .join(
         (enter) => enter,
-        (update) =>
-          update.transition().attr(
-            "d",
-            d3.line<Data>()
-              .x((d) => xScale(d.x))
-              .y((d) => yScale(d.y)),
-          ),
+        (update) => update.transition().attr("d", line),
         (exit) => exit.remove(),
       );
 
-    useTooltip(
+    // draw point
+    let points = svg.select("#data")
+      .selectAll<SVGCircleElement, Data>("circle")
+      .data(props.data)
+      .join(
+        (enter) =>
+          enter.append("circle")
+            .attr("r", 3)
+            .attr("fill", "steelblue")
+            .attr("id", (_, i) => i)
+            .attr("cx", d => xScale(d.x))
+            .attr("cy", d => yScale(d.y))
+            .attr("class", "cursor-pointer")
+            .on("mouseover", function mouseover() {
+              d3.select(this).transition().attr("r", 5);
+            }).on("mouseout", function mouseover() {
+              d3.select(this).transition().attr("r", 3);
+            }),
+        (update) =>
+          update.transition()
+            .attr("id", (_, i) => i)
+            .attr("cx", d => xScale(d.x))
+            .attr("cy", d => yScale(d.y)),
+        (exit) => exit.remove(),
+      );
+
+    // drag event
+    points.call(
+      d3.drag<SVGCircleElement, Data>()
+        .on("start", function dragstart() {
+          d3.select(this).transition().attr("r", 5);
+        })
+        .on("drag", function drag(e) {
+          const [_, y] = d3.pointer(e);
+          d3.select(this).raise().attr("cy", y);
+          const index = +d3.select(this).attr("id");
+          props.data[index].y = yScale.invert(y);
+          svg.select("#data").select("path").data([props.data])
+            .join(
+              (enter) => enter,
+              (update) => update.attr("d", line),
+              (exit) => exit.remove(),
+            );
+        })
+        .on("end", function dragend() {
+          d3.select(this).transition().attr("r", 3);
+        }),
+    );
+
+    /* useTooltip(
       svg.select("#tooltip"), // a tooltip group
       svg.select("#tooltip_overlay")
         .attr("width", props.layout.width)
@@ -75,7 +124,7 @@ export const LinePlot = (props: { data: Data[]; layout: Layout }) => {
         );
         return [xScale(closestData.x), yScale(closestData.y)];
       },
-    );
+    ); */
   }, [props.data, props.layout]);
 
   return (
@@ -91,36 +140,36 @@ export const LinePlot = (props: { data: Data[]; layout: Layout }) => {
           id="yGrid"
           className="text-lime-700"
         />
-        <g>
+        <g id="data">
           <path className="stroke-2 stroke-blue-300 fill-transparent" />
         </g>
         <g
           id="xAxis"
-          className="text-gray-600"
+          className="text-gray-600 select-none"
           transform={`translate(0, ${props.layout.height - props.layout.bottom
             })`}
         />
         <g
           id="yAxis"
-          className="text-gray-600"
+          className="text-gray-600 select-none"
           transform={`translate(${props.layout.left}, 0)`}
         />
-        <g id="tooltip">
+        {/* <g id="tooltip" className="-z-10 opacity-0">
           <rect
             className="fill-stone-900 w-16 h-8 rounded-lg"
             rx="5"
             y="-16"
             x="6"
-          />
+            />
           <text
             id="tooltip_text"
             className="fill-white text-sm"
             children="x: 1"
             x="12"
             y="5"
-          />
+            />
         </g>
-        <rect id="tooltip_overlay" />
+          <rect id="tooltip_overlay" /> */}
       </g>
     </svg>
   );
