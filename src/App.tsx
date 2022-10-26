@@ -17,7 +17,7 @@ function App() {
 
   return (
     <div className="p-2">
-      <LinePlot data={data} layout={layout} />
+      <LinePlot data={data} layout={layout} setData={setData} />
       <button
         className="border p-2 rounded hover:bg-slate-200"
         onClick={() => {
@@ -72,6 +72,11 @@ function App() {
         onClick={() => setLayout(initLayout)}
       >
         reset
+      </button>
+      <button onClick={() => {
+        console.log({ data });
+      }}>
+        data
       </button>
     </div>
   );
