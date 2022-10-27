@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { Layout } from "./Plot";
-import { useD3 } from "./useD3";
-import { useTooltip } from "./useTooltip";
+import { useD3 } from "../hooks/useD3";
+// import { useTooltip } from "../hooks/useTooltip";
 
 export type Data = {
   x: number;
