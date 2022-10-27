@@ -1,12 +1,6 @@
 import * as d3 from "d3";
-import { Layout } from "./Plot";
 import { useD3 } from "../hooks/useD3";
-// import { useTooltip } from "../hooks/useTooltip";
-
-export type Data = {
-  x: number;
-  y: number;
-};
+import { Data, Layout } from "./Plot";
 
 export const LinePlot = (
   props: { data: Data[]; setData?: (d: Data[]) => void; layout: Layout },
@@ -67,12 +61,7 @@ export const LinePlot = (
             .attr("id", (_, i) => i)
             .attr("cx", d => xScale(d.x))
             .attr("cy", d => yScale(d.y))
-            .attr("class", "cursor-pointer")
-            .on("mouseover", function mouseover() {
-              d3.select(this).transition().attr("r", 5);
-            }).on("mouseout", function mouseover() {
-              d3.select(this).transition().attr("r", 3);
-            }),
+            .attr("class", "cursor-pointer"),
         (update) =>
           update.transition()
             .attr("id", (_, i) => i)
@@ -104,27 +93,6 @@ export const LinePlot = (
         }),
     );
 
-    /* useTooltip(
-      svg.select("#tooltip"), // a tooltip group
-      svg.select("#tooltip_overlay")
-        .attr("width", props.layout.width)
-        .attr("height", props.layout.height), // mouse over rect overlay on plot
-      (e: any) => {
-        const x0 = xScale.invert(d3.pointer(e)[0]),
-          i = d3.bisector((d: typeof props.data[number]) => d.x).left(
-            props.data,
-            x0,
-          ),
-          d0 = props.data[i - 1],
-          d1 = props.data[i];
-        if (!d0 || !d1) return;
-        const closestData = x0 - d0.x > d1.x - x0 ? d1 : d0;
-        svg.select("#tooltip_text").text(
-          `(${closestData.x.toFixed(1)} ${closestData.y.toFixed(1)})`,
-        );
-        return [xScale(closestData.x), yScale(closestData.y)];
-      },
-    ); */
   }, [props.data, props.layout]);
 
   return (
@@ -154,22 +122,6 @@ export const LinePlot = (
           className="text-gray-600 select-none"
           transform={`translate(${props.layout.left}, 0)`}
         />
-        {/* <g id="tooltip" className="-z-10 opacity-0">
-          <rect
-            className="fill-stone-900 w-16 h-8 rounded-lg"
-            rx="5"
-            y="-16"
-            x="6"
-            />
-          <text
-            id="tooltip_text"
-            className="fill-white text-sm"
-            children="x: 1"
-            x="12"
-            y="5"
-            />
-        </g>
-          <rect id="tooltip_overlay" /> */}
       </g>
     </svg>
   );

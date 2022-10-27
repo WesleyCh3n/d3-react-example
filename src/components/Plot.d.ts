@@ -1,3 +1,8 @@
+export type Data = {
+  x: number;
+  y: number;
+};
+
 export type Layout = {
   width: number;
   height: number;
