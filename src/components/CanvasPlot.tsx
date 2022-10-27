@@ -49,17 +49,17 @@ export const CanvasPlot = (props: { data: Data[]; layout: Layout }) => {
       );
       ctx.fill();
       ctx.closePath(); */
-      // direct draw circles data
-      const radius = 3;
-      ctx.beginPath()
-      props.data.forEach(d => {
-        ctx.moveTo(xScale(d.x), yScale(d.y))
-        ctx.arc(xScale(d.x), yScale(d.y), radius, 0, 2 * Math.PI);
-        ctx.fillStyle = "steelblue";
-        ctx.fill();
-      })
-      ctx.closePath();
 
+      //  y grid
+      ctx.beginPath();
+      var ticks = yScale.ticks();
+      ticks.forEach(d => {
+        ctx.moveTo(props.layout.left, yScale(d));
+        ctx.lineTo(props.layout.width - props.layout.right, yScale(d));
+      });
+      ctx.strokeStyle = "#D4D4D8";
+      ctx.stroke();
+      ctx.closePath();
       // draw line
       line.context(ctx);
       ctx.beginPath();
@@ -68,12 +68,24 @@ export const CanvasPlot = (props: { data: Data[]; layout: Layout }) => {
       ctx.lineWidth = 2;
       ctx.stroke();
       ctx.closePath();
+      // direct draw circles data
+      const radius = 3;
+      ctx.beginPath();
+      props.data.forEach(d => {
+        ctx.moveTo(xScale(d.x), yScale(d.y));
+        ctx.arc(xScale(d.x), yScale(d.y), radius, 0, 2 * Math.PI);
+        ctx.fillStyle = "steelblue";
+        ctx.fill();
+      });
+      ctx.closePath();
+
 
       // x Axis
       ctx.beginPath();
       var ticks = xScale.ticks(),
         tickFormat = xScale.tickFormat(),
         tickSize = 6;
+      // ticks
       ticks.forEach((d) => {
         ctx.moveTo(
           xScale(d),
@@ -84,6 +96,15 @@ export const CanvasPlot = (props: { data: Data[]; layout: Layout }) => {
           props.layout.height - props.layout.bottom + tickSize,
         );
       });
+      // end tick
+      ctx.moveTo(
+        props.layout.width - props.layout.right,
+        props.layout.height - props.layout.bottom,
+      );
+      ctx.lineTo(
+        props.layout.width - props.layout.right,
+        props.layout.height - props.layout.bottom + tickSize,
+      );
       // horizontal line
       ctx.moveTo(props.layout.left, props.layout.height - props.layout.bottom);
       ctx.lineTo(
@@ -111,10 +132,20 @@ export const CanvasPlot = (props: { data: Data[]; layout: Layout }) => {
       var ticks = yScale.ticks(),
         tickFormat = yScale.tickFormat(),
         tickSize = 6;
+      // ticks
       ticks.forEach(d => {
         ctx.moveTo(props.layout.left, yScale(d));
         ctx.lineTo(props.layout.left - tickSize, yScale(d));
       });
+      // start tick
+      ctx.moveTo(props.layout.left, props.layout.height - props.layout.bottom);
+      ctx.lineTo(
+        props.layout.left - tickSize,
+        props.layout.height - props.layout.bottom,
+      );
+      // end tick
+      ctx.moveTo(props.layout.left, props.layout.top);
+      ctx.lineTo(props.layout.left - tickSize, props.layout.top);
       // vertical line
       ctx.moveTo(props.layout.left, props.layout.top);
       ctx.lineTo(props.layout.left, props.layout.height - props.layout.bottom);
@@ -132,16 +163,6 @@ export const CanvasPlot = (props: { data: Data[]; layout: Layout }) => {
       });
       ctx.closePath();
 
-      //  y grid
-      ctx.beginPath()
-      var ticks = yScale.ticks();
-      ticks.forEach(d => {
-        ctx.moveTo(props.layout.left, yScale(d));
-        ctx.lineTo(props.layout.width - props.layout.right, yScale(d));
-      })
-      ctx.strokeStyle = "#D4D4D8";
-      ctx.stroke();
-      ctx.closePath()
     }
 
     renderCanvas(context);
