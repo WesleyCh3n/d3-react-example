@@ -55,7 +55,7 @@ function App() {
           {"top: "}
           <input
             type="number"
-            className="border p-2 rounded w-12 text-center font-bold"
+            className="border p-2 rounded w-14 text-center font-bold"
             step={1}
             value={layout.top}
             onChange={e =>
@@ -82,7 +82,7 @@ function App() {
           {" right: "}
           <input
             type="number"
-            className="border p-2 rounded w-12 text-center font-bold"
+            className="border p-2 rounded w-14 text-center font-bold"
             step={1}
             value={layout.right}
             onChange={e =>
