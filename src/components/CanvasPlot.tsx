@@ -64,7 +64,8 @@ export const CanvasPlot = (props: { data: Data[]; layout: Layout }) => {
       line.context(ctx);
       ctx.beginPath();
       line(props.data);
-      ctx.strokeStyle = "steelblue";
+      ctx.strokeStyle = "#93c5fd";
+      ctx.lineWidth = 2;
       ctx.stroke();
       ctx.closePath();
 
@@ -86,9 +87,10 @@ export const CanvasPlot = (props: { data: Data[]; layout: Layout }) => {
       // horizontal line
       ctx.moveTo(props.layout.left, props.layout.height - props.layout.bottom);
       ctx.lineTo(
-        props.layout.width,
+        props.layout.width - props.layout.right,
         props.layout.height - props.layout.bottom,
       );
+      ctx.lineWidth = 0.8;
       ctx.strokeStyle = "black";
       ctx.stroke();
       // tick label
@@ -114,7 +116,7 @@ export const CanvasPlot = (props: { data: Data[]; layout: Layout }) => {
         ctx.lineTo(props.layout.left - tickSize, yScale(d));
       });
       // vertical line
-      ctx.moveTo(props.layout.left, 0);
+      ctx.moveTo(props.layout.left, props.layout.top);
       ctx.lineTo(props.layout.left, props.layout.height - props.layout.bottom);
       ctx.strokeStyle = "black";
       ctx.stroke();
@@ -143,7 +145,7 @@ export const CanvasPlot = (props: { data: Data[]; layout: Layout }) => {
     }
 
     renderCanvas(context);
-  }, [props.data]);
+  }, [props.data, props.layout]);
   return (
     <div ref={ref} className="border border-red-500">
       <canvas />
