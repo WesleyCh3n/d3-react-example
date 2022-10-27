@@ -77,7 +77,7 @@ export const LinePlot = (
           d3.select(this).transition().attr("r", 5);
         })
         .on("drag", function drag(e) {
-          const [_, y] = d3.pointer(e);
+          const [_, y] = d3.pointer(e, this);
           d3.select(this).raise().attr("cy", y);
           const index = +d3.select(this).attr("id");
           props.data[index].y = yScale.invert(y);
